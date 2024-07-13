@@ -47,6 +47,12 @@ const useSocket = (
           },
         ).then(async (res) => await res.json());
 
+        let userSessionId = localStorage.getItem('userSessionId');
+        if (!userSessionId) {
+          userSessionId = crypto.randomBytes(20).toString('hex');
+          localStorage.setItem('userSessionId', userSessionId!)
+        }
+
         if (
           !chatModel ||
           !chatModelProvider ||
@@ -333,6 +339,7 @@ const ChatWindow = ({ id }: { id?: string }) => {
     let added = false;
 
     const messageId = crypto.randomBytes(7).toString('hex');
+    let userSessionId = localStorage.getItem('userSessionId');
 
     ws?.send(
       JSON.stringify({
@@ -340,6 +347,7 @@ const ChatWindow = ({ id }: { id?: string }) => {
         message: {
           chatId: chatId!,
           content: message,
+          userSessionId: userSessionId,
         },
         focusMode: focusMode,
         history: [...chatHistory, ['human', message]],
